@@ -1,0 +1,39 @@
+name: C# CI Workflow
+
+on:
+  push:
+    branches:
+      - main  
+  pull_request:
+    branches:
+      - main  
+
+jobs:
+  build:
+    runs-on: windows-latest  
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2   
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: '7.0'    
+
+      - name: Restore dependencies
+        run: dotnet restore         
+
+      - name: Build
+        run: dotnet build --configuration Release  
+
+      - name: Run tests
+        run: dotnet test --configuration Release  
+
+      - name: Publish (optional)
+        run: dotnet publish --configuration Release --output ./publish  
+      - name: Upload artifact (optional)
+        uses: actions/upload-artifact@v2
+        with:
+          name: build-output
+          path: ./publish
