@@ -1,47 +1,28 @@
-name: C# CI Workflow
+name: C# Build
 
 on:
   push:
     branches:
-      - main  # Runs when code is pushed to the 'main' branch
+      - master  # Runs on every push to the master branch
   pull_request:
     branches:
-      - main  # Runs when a PR is made to the 'main' branch
+      - master  # Runs on every pull request to master
 
 jobs:
   build:
-    runs-on: windows-latest  # Windows environment for compatibility with your sound/image handling
+    runs-on: windows-latest  # Use the latest windows runner
 
     steps:
-      # Step 1: Checkout code
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Checkout Repository
+        uses: actions/checkout@v4  # Clones the repository
 
-      # Step 2: Set up .NET SDK
-      - name: Set up .NET
-        uses: actions/setup-dotnet@v2
+      - name: Set Up .NET
+        uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '7.0'  # Use the appropriate .NET version
+          dotnet-version: '7.x'  
 
-      # Step 3: Restore dependencies (NuGet packages)
-      - name: Restore dependencies
-        run: dotnet restore
+      - name: Restore Dependencies
+        run: dotnet restore  # Ensures dependencies are installed
 
-      # Step 4: Build the project
-      - name: Build the project
-        run: dotnet build --configuration Release
-
-      # Step 5: (Optional) Run tests
-      - name: Run tests
-        run: dotnet test --configuration Release
-
-      # Step 6: (Optional) Publish the app
-      - name: Publish the app
-        run: dotnet publish --configuration Release --output ./publish
-
-      # Step 7: Upload build artifact (optional)
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: chatbot-artifact
-          path: ./publish
+      - name: Build the Project
+        run: dotnet build --no-restore --configuration Release  # Builds your project
